@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www
     ports:
-      - "8020:8000"
+      - "127.0.0.1:8020:8000"
     volumes:
       - ./:/var/www
       - laundrian_vendor:/var/www/vendor
