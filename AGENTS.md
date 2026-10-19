@@ -28,3 +28,10 @@ docker compose exec app php artisan londrian:make-owner
 ```
 
 API: `http://localhost:8020`; health check: `http://localhost:8020/up`. Hentikan dengan `docker compose down`.
+
+## Git dan release
+
+- Kerjakan perubahan pada `develop`; `main` hanya menerima Pull Request produksi. `master` adalah branch lama yang tetap diproteksi sampai penghapusannya selesai di GitHub.
+- Aktifkan hook sekali pada clone baru: `git config core.hooksPath .githooks`. Hook menolak commit atau push langsung ke `main`/`master`, tetapi tidak menghambat push `develop` atau Pull Request. Penghapusan branch lama `master` hanya diizinkan dengan variabel satu kali `LAUNDRIAN_ALLOW_DELETE_LEGACY_MASTER=1` setelah default branch GitHub sudah `main`.
+- Jalankan `powershell -ExecutionPolicy Bypass -File scripts/release.ps1` dari folder backend untuk memvalidasi `origin/develop` lewat worktree sementara. Script memasang dependency di worktree lalu menjalankan `php artisan test` dengan SQLite in-memory, sehingga tidak menjalankan Docker, migrasi, database aplikasi, deployment, merge, atau push.
+- Sebelum release, working tree harus bersih dan `develop` lokal harus identik dengan `origin/develop`. Setelah validasi, buat PR `develop` ke `main`; minta persetujuan eksplisit sebelum membuat atau menyetujui PR produksi.

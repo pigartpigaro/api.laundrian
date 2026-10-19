@@ -1,0 +1,9 @@
+#!/bin/sh
+
+branch="$(git branch --show-current)"
+case "$branch" in
+  main|master)
+    echo "Commit langsung ke $branch ditolak. Buat perubahan di develop dan gunakan Pull Request." >&2
+    exit 1
+    ;;
+esac

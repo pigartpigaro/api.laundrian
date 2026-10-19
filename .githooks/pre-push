@@ -1,0 +1,14 @@
+#!/bin/sh
+
+while read local_ref local_sha remote_ref remote_sha
+do
+  case "$remote_ref" in
+    refs/heads/main|refs/heads/master)
+      if [ "$remote_ref" = "refs/heads/master" ] && [ "$local_ref" = "(delete)" ] && [ "$LAUNDRIAN_ALLOW_DELETE_LEGACY_MASTER" = "1" ]; then
+        continue
+      fi
+      echo "Push langsung ke branch produksi ditolak. Push develop lalu gunakan Pull Request." >&2
+      exit 1
+      ;;
+  esac
+done
