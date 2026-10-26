@@ -220,7 +220,7 @@ class SettingController extends Controller
                 'services' => ['present', 'array', 'max:30'],
                 'services.*.name' => ['required', 'string', 'max:80'],
                 'services.*.description' => ['nullable', 'string', 'max:400'],
-                'services.*.icon' => ['required', 'in:shirt,person,shoes,bedding,bag,iron'],
+                'services.*.icon' => ['required', 'in:laundry-kiloan,laundry-satuan,bedding,household,shoes,shirt,person,curtains,carpet,bag,iron'],
             ]);
             if ($validator->fails()) {
                 throw ValidationException::withMessages(['website_services' => 'Periksa nama, deskripsi, dan ikon layanan website. Maksimal 30 layanan.']);

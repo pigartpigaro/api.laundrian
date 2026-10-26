@@ -60,3 +60,34 @@ Daftar endpoint, format transaksi, cursor scroll, dan aturan status ada di [docs
 `.env.example` berisi contoh lokal untuk `APP_KEY`, `APP_URL`, `FRONTEND_URL`, dan kredensial MySQL. Nilai password di dalamnya hanya contoh; jangan commit `.env` atau kredensial aktif.
 
 Frontend Vite POS Londrian berjalan di port 5174 dan website publik outlet pada port 5175. `FRONTEND_URL` menerima satu atau beberapa origin CORS yang dipisahkan koma, tanpa kredensial cookie. Frontend POS mengakses API menggunakan Bearer token Sanctum. Website publik hanya membaca informasi outlet yang ditujukan bagi pelanggan; endpoint dan payload terperinci ada pada `docs/api.md`.
+
+## Git dan release
+
+Kerja harian selalu di branch `develop`; `main` adalah production. Setelah clone baru, pasang hook sekali:
+
+```powershell
+composer run hooks:install
+```
+
+Alur kerja harian:
+
+```powershell
+git switch develop
+git pull --ff-only origin develop
+# ubah kode, lalu jalankan pemeriksaan yang diperlukan
+git add .
+git commit -m "jelaskan perubahan"
+git push origin develop
+```
+
+Untuk release backend jalankan `composer run release` (alias `composer run deploy`) dari `develop` setelah commit develop sudah di-push:
+
+```powershell
+git switch develop
+git add .
+git commit -m "jelaskan perubahan"
+git push origin develop
+composer run release
+```
+
+Script memeriksa working tree bersih, sinkronisasi `develop`, dan fast-forward aman dari `main`. Ia menjalankan `php artisan test` dengan SQLite in-memory di worktree sementara. Jika lolos, script mendorong hasil ke `main`; branch kerja tetap `develop`. Gunakan `composer run release -- -DryRun` untuk validasi tanpa push. Tidak ada Docker atau database aplikasi yang disentuh. Push manual ke branch produksi ditolak hook lokal.
