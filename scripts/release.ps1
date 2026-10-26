@@ -28,6 +28,20 @@ function Invoke-WorktreeGit {
     if ($LASTEXITCODE -ne 0) { throw "git $($Arguments -join ' ') gagal." }
 }
 
+function Sync-LocalMain {
+    param([string]$ReleaseSha)
+    try {
+        $localMainSha = Get-GitOutput rev-parse --verify refs/heads/main
+        if ($localMainSha -eq $ReleaseSha) { return }
+        & git -C $root merge-base --is-ancestor $localMainSha $ReleaseSha
+        if ($LASTEXITCODE -ne 0) { throw 'main lokal bukan ancestor dari commit release.' }
+        Invoke-Git update-ref refs/heads/main $ReleaseSha $localMainSha
+        Write-Output 'Branch main lokal disinkronkan; branch aktif tetap develop.'
+    } catch {
+        Write-Warning 'origin/main sudah diperbarui, tetapi main lokal tidak digeser karena tidak dapat dipastikan fast-forward.'
+    }
+}
+
 if ($Help) {
     Write-Output 'composer run release memvalidasi develop lalu fast-forward dan push ke main. Gunakan -DryRun untuk validasi tanpa push.'
     exit 0
@@ -74,6 +88,7 @@ try {
             $releaseSha = (& git -C $tempRoot rev-parse HEAD | Out-String).Trim()
             if ($LASTEXITCODE -ne 0) { throw 'gagal membaca commit hasil validasi.' }
             Invoke-Git push origin "${releaseSha}:refs/heads/main"
+            Sync-LocalMain $releaseSha
         } finally {
             $env:LAUNDRIAN_RELEASE_PUSH = $previousPush
             $env:LAUNDRIAN_RELEASE_REF = $previousRef
