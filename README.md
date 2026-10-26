@@ -90,4 +90,4 @@ git push origin develop
 composer run release
 ```
 
-Script memeriksa working tree bersih, sinkronisasi `develop`, dan fast-forward aman dari `main`. Ia menjalankan `php artisan test` dengan SQLite in-memory di worktree sementara. Jika lolos, script mendorong hasil ke `main`; branch kerja tetap `develop`. Gunakan `composer run release -- -DryRun` untuk validasi tanpa push. Tidak ada Docker atau database aplikasi yang disentuh. Push manual ke branch produksi ditolak hook lokal.
+Script memeriksa working tree bersih, sinkronisasi `develop`, dan fast-forward aman dari `main`. Di worktree sementara, script membuat `.env`, menghasilkan APP_KEY sementara, lalu menjalankan `php artisan test` dengan SQLite in-memory. Jika lolos, script mendorong hasil ke `main`; branch kerja tetap `develop`. Gunakan `composer run release -- -DryRun` untuk validasi tanpa push. Tidak ada Docker atau database aplikasi yang disentuh. Push manual ke branch produksi ditolak hook lokal.

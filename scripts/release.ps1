@@ -52,6 +52,8 @@ try {
         & composer install --no-interaction --prefer-dist --no-progress
         if ($LASTEXITCODE -ne 0) { throw 'composer install gagal.' }
         Copy-Item '.env.example' '.env'
+        & php artisan key:generate --force
+        if ($LASTEXITCODE -ne 0) { throw 'gagal membuat APP_KEY sementara untuk test.' }
         $env:APP_ENV = 'testing'
         $env:DB_CONNECTION = 'sqlite'
         $env:DB_DATABASE = ':memory:'
